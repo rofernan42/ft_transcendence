@@ -87,6 +87,8 @@ class PongsController < ApplicationController
                   guild_war.looser = guild_one.id
                   guild_one.loose += 1
                   guild_two.win += 1
+                  guild_one.war = nil
+                  guild_two.war = nil
                   guild_war.done = true
                   guild_war.started = true 
                   guild_war.pending = false
@@ -101,6 +103,8 @@ class PongsController < ApplicationController
                   guild_war.winner = guild_one.id
                   guild_two.loose += 1
                   guild_one.win += 1
+                  guild_one.war = nil
+                  guild_two.war = nil
                   guild_war.done = true
                   guild_war.started = true 
                   guild_war.pending = false
