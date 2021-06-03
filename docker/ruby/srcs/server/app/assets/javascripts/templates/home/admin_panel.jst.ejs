@@ -1,0 +1,205 @@
+<div id="sidenav">
+    <div style="padding:10px;border-bottom: 1px solid rgba(0, 0, 0, 0.12);"><img class="prev-page" src="assets/previous_b.png" onclick="window.history.back()">
+    Previous page</div>
+    <table>
+        <% if (Transcendence.current_user.toJSON().superuser == true) { %>
+        <tr>
+            <td style="border-bottom: 1px solid rgba(0, 0, 0, 0.12);" class="sideopt" onclick='$(".admin-option").slideUp();$("#admins-actions").slideToggle(300)'>Admins</td>
+        </tr>
+        <% } %>
+        <tr>
+            <td style="border-bottom: 1px solid rgba(0, 0, 0, 0.12);" class="sideopt" onclick='$(".admin-option").slideUp();$("#bans-actions").slideToggle(300)'>Bans</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid rgba(0, 0, 0, 0.12);" class="sideopt" onclick='$(".admin-option").slideUp();$("#chatrooms-actions").slideToggle(300)'>Chatrooms</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid rgba(0, 0, 0, 0.12);" class="sideopt" onclick='$(".admin-option").slideUp();$("#guilds-actions").slideToggle(300)'>Guilds</td>
+        </tr>
+        <tr>
+            <td class="sideopt" onclick='$(".admin-option").slideUp();$("#tournaments-actions").slideToggle(300)'>Tournaments</td>
+        </tr>
+    </table>
+</div>
+<div style="margin-left:200px;">
+<div id="admin-panel" style="width:700px;">
+    <div class="header">
+        <h1>General Admin panel</h1>
+    </div>
+    <div id="admins-actions" class="admin-option" style="display:none;">
+        <table class="action-type">
+            <br/>
+            <tr>
+                <td class="inputs">
+                    <form action="/api/admin/set_admin" type="submit" method="post" data-remote="true">
+                        <input type="hidden" name="_method" value="put">
+                        <input id="input-setadmin" type="text" name="username" placeholder="Type or select user..." autocomplete="off">
+                        <input type="submit" value="Set as admin">
+                        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td class="members-list">
+                    <div class="header">Members list</div>
+                    <div class="content">
+                        <% $.each(members, function(i) { %>
+                        <div class="option" onclick="$('#input-setadmin').val($(this).text());"><%= Transcendence.users.get(members[i]).toJSON().username %></div>
+                        <% }); %>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        &emsp;&emsp;
+        <table class="action-type">
+            <tr>
+                <td class="inputs">
+                    <form action="/api/admin/unset_admin" type="submit" method="post" data-remote="true">
+                        <input type="hidden" name="_method" value="put">
+                        <input id="input-unsetadmin" type="text" name="username" placeholder="Type or select user..." autocomplete="off">
+                        <input type="submit" value="Demote">
+                        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td class="members-list">
+                    <div class="header">Admins list</div>
+                    <div class="content">
+                        <% $.each(admins, function(i) { %>
+                        <div class="option" onclick="$('#input-unsetadmin').val($(this).text());"><%= Transcendence.users.get(admins[i]).toJSON().username %></div>
+                        <% }); %>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <br/><br/>
+    </div>
+    <div id="bans-actions" class="admin-option" style="display:none;">
+        <table class="action-type">
+            <br/>
+            <tr>
+                <td class="inputs">
+                    <form action="/api/admin/ban_user" type="submit" method="post" data-remote="true">
+                        <input type="hidden" name="_method" value="put">
+                        <input id="input-ban" type="text" name="username" placeholder="Type or select user..." autocomplete="off">
+                        <input type="submit" value="Ban user">
+                        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td class="members-list">
+                    <div class="header">Members list</div>
+                    <div class="content">
+                        <% $.each(members, function(i) { %>
+                        <div class="option" onclick="$('#input-ban').val($(this).text());"><%= Transcendence.users.get(members[i]).toJSON().username %></div>
+                        <% }); %>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        &emsp;&emsp;
+        <table class="action-type">
+            <tr>
+                <td class="inputs">
+                    <form action="/api/admin/unban_user" type="submit" method="post" data-remote="true">
+                        <input type="hidden" name="_method" value="put">
+                        <input id="input-unban" type="text" name="username" placeholder="Type or select user..." autocomplete="off">
+                        <input type="submit" value="Unban user">
+                        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td class="members-list">
+                    <div class="header">Banned users list</div>
+                    <div class="content">
+                        <% $.each(banned, function(i) { %>
+                        <div class="option" onclick="$('#input-unban').val($(this).text());"><%= Transcendence.users.get(banned[i]).toJSON().username %></div>
+                        <% }); %>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <br/><br/>
+    </div>
+    <div id="chatrooms-actions" class="admin-option" style="display:none;">
+        <br/>
+        <table class="admin-choices">
+        <% if (Transcendence.chatrooms.length == 0) { %>
+            <tr>
+                <td>There are no chatrooms !</td>
+            </tr>
+        <% } else { %>
+            <tr>
+                <td colspan="3" style="text-align:center;font-weight:bold;">Chatrooms</td>
+            </tr>
+        <% } %>
+        <% Transcendence.chatrooms.each(function (cr) { %>
+            <tr>
+                <td style="width:100%;" onclick="document.location='#chatrooms/<%= cr.id %>'"><%= cr.toJSON().name %></td>
+                <td><a href="/#chatrooms/<%= cr.id %>/admin"><button>admin panel</button></a></td>
+                <td>
+                    <form action="/api/chatrooms/<%= cr.id %>" method="post" data-remote="true" data-confirm="Are you sure to delete this chatroom?">
+                        <input type="hidden" name="_method" value="delete">
+                        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                        <button type="submit" name="commit" class="destroy">destroy</button>
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+        </table>
+    </div>
+    <div id="guilds-actions" class="admin-option" style="display:none;">
+        <br/>
+        <table class="admin-choices">
+        <% if (Transcendence.guilds.length == 0) { %>
+            <tr>
+                <td>There are no guilds !</td>
+            </tr>
+        <% } else { %>
+            <tr>
+                <td colspan="2" style="text-align:center;font-weight:bold;">Guilds</td>
+            </tr>
+        <% } %>
+        <% Transcendence.guilds.each(function (guild) { %>
+            <tr>
+                <td onclick="document.location='#guilds/<%= guild.id %>'"><%= guild.toJSON().name %></td>
+            </tr>
+        <% }) %>
+        </table>
+    </div>
+    <div id="tournaments-actions" class="admin-option" style="display:none;">
+        <br/>
+        <form action="/api/tournaments" class="admin-choices" type="submit" method="post" data-remote="true">
+            Start time*:
+            <input type="date" name="tournament[date]"> <input type="time" name="tournament[time]">
+            <br/>User reward: <input type="number" name="tournament[user_reward]" value="0" min="0" max="1000">
+            <br/>Guild reward: <input type="number" name="tournament[guild_reward]" value="0" min="0" max="1000">
+            <br/><i style="font-size:smaller;">*mandatory</i>
+            <br/><br/><button type="submit">create a tournament</button>
+            <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+        </form>
+        <br/>
+        <table class="admin-choices">
+            <% if (Transcendence.tournaments.length == 0) { %>
+                <tr>
+                    <td style="text-align:center;">There are no tournaments !</td>
+                </tr>
+            <% } %>
+            <% Transcendence.tournaments.each(function (tr) { %>
+                <tr>
+                    <td style="font-size:12px;"><%= tr.toJSON().id %></td>
+                    <td style="font-size:12px;">User reward: <%= tr.toJSON().user_reward %><br/>Guild reward: <%= tr.toJSON().guild_reward %></td>
+                    <td style="font-size:12px;">Start time: <%= tr.toJSON().start_time.split("T")[0] %> <%= tr.toJSON().start_time.split("T")[1].split(".")[0] %></td>
+                    <td style="font-size:12px;">Started: <%= tr.toJSON().started %></td>
+                    <td style="font-size:20px;">
+                        <a href="/api/tournaments/<%= tr.toJSON().id %>" style="text-decoration:none;" data-method="delete" data-remote="true" rel="nofollow"><div style="padding-right:3px;">&times;</div></a>
+                    </td>
+                </tr>
+            <% }) %>
+        </table>
+    </div>
+</div>
+</div>

@@ -1,0 +1,94 @@
+<div style="padding:10px;"><img class="prev-page" src="assets/previous_b.png"onclick="document.location='/#guilds'"> Guilds</div>
+<% if (Transcendence.current_user.toJSON().guild == null) { %>
+<form class="sideform" style="margin-top:0;" action="/api/guilds" accept-charset="UTF-8" method="post" data-remote="true">
+    Guild name<br/>
+    <input autocomplete="off" type="text" name="name" minlength="4" maxlength="12" id="name_id">
+    <br>Anagram <i style="font-size:12px;">(5 letters)</i><br/>
+    <input autocomplete="off" type="text" name="anagram" minlength="5" maxlength="5">
+    <br/>
+    <input type="hidden" name="points" value="1000">
+    <input type="hidden" name="win" value="0">
+    <input type="hidden" name="loose" value="0">
+    <input type="hidden" name="war" value="null">
+    <input type="hidden" name="owner" value="<%= Transcendence.current_user.id %>">
+    <div style="padding:5px;"><button type="submit" name="commit" class="edit">create a guild</button></div>
+    <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+</form>
+<% } else if (Transcendence.guilds.get(Transcendence.current_user.toJSON().guild)) { %>
+<% guild = Transcendence.guilds.get(Transcendence.current_user.toJSON().guild).toJSON() %>
+<div class="sideform" style="margin-top:0;">
+    <div style="padding:5px"><a href="#guilds/<%= Transcendence.current_user.toJSON().guild %>"><button class="edit">my guild</button></a></div>
+    <% if (Transcendence.current_user.id == guild.owner) {
+        grade = "Master"
+    } else if (Transcendence.current_user.toJSON().officer == true) {
+        grade = "Officer"
+    } else if (Transcendence.current_user.toJSON().member == true) {
+        grade = "VIP Member"
+    } else {
+        grade = "Member"
+    } %>
+    Grade: <span style="font-family:Impact;"><%= grade %></span><br/>
+    Guild score: <span style="font-family:Impact;"><%= guild.points %></span><br/>
+    Wars won: <span style="font-family:Impact;"><%= guild.win %></span><br/>
+    Wars lost: <span style="font-family:Impact;"><%= guild.loose %></span><br/>
+    <% if (Transcendence.current_user.id == guild.owner) { %>
+        <button type="button" class="edit destroy" onclick='$("#leave-modal").show()'>leave guild</button>
+    <% } else { %>
+        <form action="/api/guilds/leave_guild" accept-charset="UTF-8" method="post" data-remote="true">
+            <input type="hidden" name="current_id" value="<%= Transcendence.current_user.toJSON().id %>">
+            <button type="submit" class="edit destroy">leave guild</button>
+            <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+        </form>
+    <% } %>
+</div>
+<% if (Transcendence.current_user.id == guild.owner) { %>
+    <form class="sideform" action="/api/guilds/<%= Transcendence.current_user.toJSON().guild %>" style="margin-top:0;border-top:none" accept-charset="UTF-8" method="post" data-remote="true">
+        <input type="hidden" name="_method" value="patch">
+        Edit guild name<br/>
+        <input value="<%= guild.name %>" autocomplete="off" type="text" name="name" minlength="4" maxlength="12">
+        <br>Edit anagram <i style="font-size:12px;">(5 letters)</i><br/>
+        <input value="<%= guild.anagram %>" autocomplete="off" type="text" name="anagram" minlength="5" maxlength="5">
+        <br/>
+        <div style="padding:5px;"><button type="submit" name="commit" class="edit">edit guild</button></div>
+        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+        <button type="button" class="edit destroy" onclick='$("#destroy-modal").show()'>destroy guild</button>
+    </form>
+    <div class="sideform" style="margin-top:0;border:none"><a href="#guilds/<%= Transcendence.current_user.toJSON().guild %>/wars/new"><button class="edit">start a war</button></a></div>
+    <div id="destroy-modal" class="modal">
+        <div class="modal-content">
+            <span id="close" onclick='$("#destroy-modal").hide()'>&times;</span><br/>
+            <div class="modal-header">
+                <img class="padlock-image" src="/assets/warning.png">
+                Are you sure you want to<br/>destroy this guild ?<br/>
+                <i style="font-size:15px">(this action is irreversible)</i>
+            </div>
+            <br/>
+            <form action="/api/guilds/<%= guild.id %>" method="post" data-remote="true">
+                <input type="hidden" name="_method" value="delete">
+                <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                <button type="submit" name="commit" class="confirm-choice yes">Yes</button>
+                <button type="button" class="confirm-choice" onclick='$("#destroy-modal").hide()'>No</button>
+            </form>
+        </div>
+    </div>
+<% } %>
+<% } %>
+
+<div id="leave-modal" class="modal">
+    <div class="modal-content">
+        <span id="close" onclick='$("#leave-modal").hide()'>&times;</span><br/>
+        <div class="modal-header">
+            <img class="padlock-image" src="/assets/new_owner.png">
+            Select a new owner for this guild
+        </div>
+        <br/>
+        <form action="/api/guilds/leave_guild" accept-charset="UTF-8" method="post" data-remote="true">
+            <div class="modal-body">
+                <input autocomplete="off" placeholder="Enter user name..." type="text" name="new_owner">
+                <button type="submit" class="button-password" onclick='$("#leave-modal").hide()'><img style="padding:0;width:25px;height:25px;vertical-align:middle;" src="/assets/send.png"></button>
+                <input type="hidden" name="current_id" value="<%= Transcendence.current_user.toJSON().id %>">
+                <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+            </div>
+        </form>
+    </div>
+</div>

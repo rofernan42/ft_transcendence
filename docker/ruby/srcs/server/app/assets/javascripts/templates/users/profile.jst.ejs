@@ -1,0 +1,159 @@
+<div id="user-profile">
+    <% if (user.id != Transcendence.current_user.id) { %>
+    <div class="friend-request">
+        <% if (!friend) { %>
+            <%= user.username %> is not your friend<br/>
+            <form action="/api/friends" method="post" style="display:inline-block" data-remote="true">
+                <button type="submit" style="padding:1px;padding-left:5px;padding-right:5px;">add friend</button>
+                <input value="<%= user.id %>" type="hidden" name="user_one_id">
+                <input value="<%= Transcendence.current_user.toJSON().id %>" type="hidden" name="user_two_id">
+                <input value="true" type="hidden" name="pending">
+                <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+            </form>
+        <% } else if (friend.toJSON().pending == false) { %>
+            <%= user.username %> is your friend<br/>
+            <form action="/api/friends/<%= friend.toJSON().id %>" style="display:inline-block" method="post" data-remote="true">
+                <input type="hidden" name="_method" value="delete">
+                <button type="submit" style="padding:1px;padding-left:5px;padding-right:5px;" class="decline">&times; unfriend</button>
+                <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+            </form>
+        <% } else if (friend.toJSON().user_two_id == Transcendence.current_user.id && friend.toJSON().user_one_id == user.id) { %>
+            <%= user.username %> is not your friend<br/>
+            <form action="/api/friends/<%= friend.toJSON().id %>" style="display:inline-block" method="post" data-remote="true">
+                <input type="hidden" name="_method" value="delete">
+                <button type="submit" style="padding:1px;padding-left:5px;padding-right:5px;" class="decline">&times; cancel request</button>
+                <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+            </form>
+        <% } else if (friend.toJSON().user_one_id == Transcendence.current_user.id && friend.toJSON().user_two_id == user.id) { %>
+            <%= user.username %> sent you a friend request<br/>
+            <form action="/api/friends/<%= friend.toJSON().id %>" style="display:inline-block" method="post" data-remote="true">
+                <input type="hidden" name="_method" value="put">
+                <button type="submit" style="padding:1px;padding-left:5px;padding-right:5px;" class="accept">accept</button>
+                <input value="false" type="hidden" name="pending">
+                <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+            </form>
+            <form action="/api/friends/<%= friend.toJSON().id %>" style="display:inline-block" method="post" data-remote="true">
+                <input type="hidden" name="_method" value="delete">
+                <button type="submit" style="padding:1px;padding-left:5px;padding-right:5px;" class="decline">decline</button>
+                <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+            </form>
+        <% } %>
+    </div>
+    <% } else { %>
+        <div id="users-index" style="position:absolute;width:min-content">            
+            <table>
+                <tr>
+                    <th colspan="5">Guild invitations</th>
+                </tr>
+            <% if (guild_invitations.length == 0) { %>
+                <tr><td style="text-align:center;">You don't have guild invitations !</td></tr>
+            <% } %>
+            <% guild_invitations.forEach(function(guild_inv) { %>
+                <% guild = Transcendence.guilds.get(guild_inv.toJSON().guild_id).toJSON() %>
+                <tr class="users-list">
+                    <td onclick='document.location = "/#guilds/<%= guild.id %>"'>[<%= guild.anagram %>] <%= guild.name %></a></td>
+                    <td class="users-action">
+                        <form action="/api/guild_invitations/<%= guild_inv.toJSON().id %>" method="post" data-remote="true">
+                            <input type="hidden" name="_method" value="put">
+                            <button type="submit" style="padding:1px;padding-left:5px;padding-right:5px;" class="accept-request">accept</button>
+                            <input value="<%= Transcendence.current_user.toJSON().id %>" type="hidden" name="user_id">
+                            <input value="<%= guild.id %>" type="hidden" name="guild_id">
+                            <input value="false" type="hidden" name="pending">
+                        </form>
+                    </td>
+                    <td class="users-action">
+                        <form action="/api/guild_invitations/<%= guild_inv.toJSON().id %>" method="post" data-remote="true">
+                            <input type="hidden" name="_method" value="delete">
+                            <button type="submit" style="padding:1px;padding-left:5px;padding-right:5px;" class="decline-request">decline</button>
+                            <input value="<%= Transcendence.current_user.toJSON().id %>" type="hidden" name="user_id">
+                            <input value="<%= guild.id %>" type="hidden" name="guild_id">
+                            <input value="false" type="hidden" name="pending">
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+            </table>
+        </div>
+    <% } %>
+
+    <img src="<%= user.avatar %>">
+    <h1>
+        <%= user.username %>'s profile
+        <% if (user.online == true) { %>
+        <span class="status online"></span>
+        <% } else { %>
+        <span class="status offline"></span>
+        <% } %>
+    </h1>
+    <div class="edit-current-user">
+        <% if (user.id == Transcendence.current_user.id) { %>
+            <a href="/#users/edit_account"><button>Edit account</button></a>
+            <a href="/#users/edit_profile"><button>Edit profile</button></a>
+            <a href="/#users/friends"><button>Friends</button></a>
+            <br/>
+        <% } else { %>
+            <table style="margin:auto;">
+                <tr>
+                    <td>
+                        <form action="/api/private_rooms" method="post" data-remote="true" id="send-pm" class="<%= user.id %>">
+                            <button type="submit" class="menu-option">send PM</button>
+                            <input value="<%= Transcendence.current_user.id %>" type="hidden" name="private_room[user1]">
+                            <input value="<%= user.id %>" type="hidden" name="private_room[user2]">
+                            <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/api/pongs/duel_demand" method="post" data-remote="true">
+                            <button type="submit" class="menu-option">duel request</button>
+                            <input value="<%= Transcendence.current_user.id %>" type="hidden" name="user_one_id">
+                            <input value="<%= user.id %>" type="hidden" name="user_two_id">
+                            <input type="hidden" value="false" type="hidden" name="war">
+                            <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                        </form>
+                    </td>
+                    <td>
+                        <% if (Transcendence.current_user.toJSON().block_list.includes(user.id)) { %>
+                            <% var action = "unblock" %>
+                            <% } else { %>
+                            <% var action = "block" %>
+                        <% } %>
+                        <form action="/api/users/<%= action %>_user" method="post" data-remote="true">
+                            <input type="hidden" name="_method" value="put">
+                            <button type="submit" class="<%= action %>"><%= action %></button>
+                            <input value="<%= user.id %>" type="hidden" name="user[id]">
+                            <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        <% } %>
+        <% if (user_guild != null) { %>
+            <br/>
+            <div style="font-size:30px;">Guild: <span style="font-family:Impact;"><a href="/#guilds/<%= user.guild %>" style="text-decoration:none;">[<%= user_guild.anagram %>] <%= user_guild.name %></a></span></div>
+        <% } %>
+        <br/>
+        <div style="font-size:30px;">Score: <span style="font-family:Impact;"><%= user.score %></span></div>
+        <br/>
+        <div class="points-guild" style="padding:5px;font-size:20px">Games won: <span style="font-family:Impact;color:rgb(68, 146, 68);"><%= Transcendence.pongs.where({winner: user.id}).length %></span></div>
+        <div class="points-guild" style="padding:5px;font-size:20px">Games lost: <span style="font-family:Impact;color:rgb(207, 40, 40)"><%= Transcendence.pongs.where({looser: user.id}).length %></span></div>
+        <br/>
+        <div class="games-history">
+        <table>
+        <% Transcendence.pongs.each(function(pong) { %>
+            <% if (pong.toJSON().user_left_id == user.id || pong.toJSON().user_right_id == user.id) { %>
+                <tr>
+                    <td><%= Transcendence.users.get(pong.toJSON().user_left_id).toJSON().username %></td>
+                    <td>
+                        <b style="font-family:Impact;"><%= pong.toJSON().user_left_score %>&emsp;-&emsp;<%= pong.toJSON().user_right_score %></b><br/>
+                        <span style="font-size:15px"><% if (pong.toJSON().tie == true) { %>Tie
+                        <% } else if (pong.toJSON().winner == user.id) { %>Victory
+                        <% } else if (pong.toJSON().looser == user.id) { %>Defeat<% } %></span>
+                    </td>
+                    <td><%= Transcendence.users.get(pong.toJSON().user_right_id).toJSON().username %></td>
+                </tr>
+            <% } %>
+        <% }) %>
+        </table>
+        </div>
+    </div>
+</div>

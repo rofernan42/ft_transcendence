@@ -1,0 +1,33 @@
+<div id="pong-gen">
+    <div id="pong-index">
+        <div id="user-left">
+            <img src="<%= user_left.avatar %>" style="border-radius:50%;width:100px;height:100px">
+            <h1><%= user_left.username %></h1>
+            <p id="user_left_score">0</p>
+            <% if (Transcendence.current_user.toJSON().id == user_left.id) { %>
+                <button id="forfeit-left" class="forfeit-button">forfeit</button>
+            <% } %>
+        </div>
+        <div id="canvas-div" style="background:white;border: 2px solid black;width:min-content;display:inline-block;margin:auto;vertical-align:middle;">
+            <canvas id="canvas-id" width="600" height="350"></canvas>
+        </div>
+        <div id="user-right">
+            <img src="<%= user_right.avatar %>" style="border-radius:50%;width:100px;height:100px">
+            <h1><%= user_right.username %></h1>
+            <p id="user_right_score">0</p>
+            <% if (Transcendence.current_user.toJSON().id == user_right.id) { %>
+                <button id="forfeit-right">forfeit</button>
+            <% } %>
+        </div>
+    </div>
+    <br/>
+    <br/>
+    <div style="text-align:center;">
+    <% if ((Transcendence.current_user.toJSON().id != user_right.id) && (Transcendence.current_user.toJSON().id != user_left.id)){ %>
+        <button id="leave-spec">leave spectator mode</button>
+    <% } %>
+    </div>
+</div>
+<script>
+
+</script>

@@ -1,0 +1,57 @@
+<div id="sidenav">
+    <div class="sideform" style="margin-top:0;"><a href="#private_rooms"><button class="edit">search user</button></a></div>
+    <table>
+        <% prs.forEach(function(pr) { %>
+        <% var to_user = Transcendence.users.get(pr.toJSON().users.filter(function(usr) {
+            return usr != Transcendence.current_user.id;
+        })).toJSON() %>
+        <tr class="pm-opts">
+            <td class="pm-opt" onclick='document.location="/#private_rooms/<%= pr.id %>"'>
+                <img style="display:inline-block;vertical-align:middle;width:20px;height:20px;border-radius:50%" src="<%= to_user.avatar %>">
+                <%= to_user.username %>
+            </td>
+            <td class="pm-opt" style="width:20px;">
+                <a href="/api/private_rooms/<%= pr.id %>" style="text-decoration:none;" data-method="delete" data-remote="true" rel="nofollow" data-confirm="Are you sure ? All messages will be deleted"><div style="padding-right:3px;">&times;</div></a>
+            </td>
+            <div id="destroy-pm-<%= pr.id %>" class="modal">
+                <div class="modal-content">
+                    <span id="close" onclick='$("#destroy-pm-<%= pr.id %>").hide()'>&times;</span><br/>
+                    <div class="modal-header">
+                        <img class="padlock-image" src="/assets/warning.png"><br/>
+                        Destroy this discussion ?<br/>All messages will be deleted<br/>
+                        <i style="font-size:15px">(this action is irreversible)</i>
+                    </div>
+                    <br/>
+                    <form action="/api/private_rooms/<%= pr.id %>" method="post" data-remote="true">
+                        <input type="hidden" name="_method" value="delete">
+                        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                        <button type="submit" name="commit" class="confirm-choice yes">Yes</button>
+                        <button type="button" class="confirm-choice" onclick='$("#destroy-pm-<%= pr.id %>").hide()'>No</button>
+                    </form>
+                </div>
+            </div>
+        </tr>
+        <% }) %>
+    </table>
+</div>
+
+<div id="private-room">
+    <div id="pr-content">
+        <div id="pm-header">Discussion with <%= to_user.username %></div>
+        <div id="private-messages"></div>
+        <div id="send-private-message">
+            <form action="/api/private_messages" accept-charset="UTF-8" data-remote="true" method="post">
+                <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                <table>
+                    <tr>
+                        <td class="text"><input placeholder="New message..." autocomplete="off" type="text"
+                                class="text-field" id="text-pm-field" required="required" name="pm[message]"></td>
+                        <td class="button"><input type="submit" class="button-field" value="send" name="commit"></td>
+                    </tr>
+                </table>
+                <input value="<%= Transcendence.current_user.id %>" type="hidden" name="pm[user_id]">
+                <input value="<%= pr.id %>" type="hidden" name="pm[private_room_id]">
+            </form>
+        </div>
+    </div>
+</div>

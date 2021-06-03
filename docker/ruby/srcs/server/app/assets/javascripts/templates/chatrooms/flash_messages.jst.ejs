@@ -1,0 +1,38 @@
+<div id="flash-admin-message">
+  <div class="flash-background">
+    <div class="flash-header">
+      <img class="flash-image" src="/assets/admin.png">
+      You have been promoted admin of this chatroom!
+    </div>
+    <div class="flash-content">
+      You can now mute and ban users from this chatroom.<br/><br/>
+      <div class="flash-button-link" onclick='$("#flash-admin-message").hide()'><button class="flash-button">Continue</button></div>
+    </div>
+  </div>
+</div>
+
+<div id="flash-owner-message">
+  <div class="flash-background">
+    <div class="flash-header">
+      <img class="flash-image" src="/assets/key.png">
+      You are the new owner of this chatroom!
+    </div>
+    <div class="flash-content">
+      You can now promote, mute and ban users from this chatroom.<br/><br/>
+      <div class="flash-button-link" onclick='$("#flash-owner-message").hide()'><button class="flash-button">Continue</button></div>
+    </div>
+  </div>
+</div>
+
+<div id="flash-ban-message">
+  <div class="flash-background">
+    <div class="flash-header">
+      <img class="flash-image" src="/assets/block.png">
+      <span class="banned">You have been banned from this chatroom!</span>
+    </div>
+    <div class="flash-content">
+      You have no longer access to this chatroom.<br/><br/>
+      <a href="/#chatrooms" class="flash-button-link" onclick='$("#flash-ban-message").hide()'><button class="flash-button">Continue</button></a>
+    </div>
+  </div>
+</div>

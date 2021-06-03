@@ -1,0 +1,30 @@
+<div id="edit-panel">
+    <div class="panel edit-account">
+        <span class="closebtn" onclick="document.location='/#users/<%= user.id %>'">&times;</span><br/><br/>
+        <div class="header">
+            <h1>Edit profile</h1>
+        </div>
+        <br/>
+        <form action="/api/users/edit_profile" method="post" data-remote="true" enctype="multipart/form-data" id="user-edit-profile">
+            <input type="hidden" name="_method" value="put">
+            Username<br/>
+            <input autofocus="autofocus" type="text" value="<%= user.username %>" name="user[username]" id="user_username">
+            <br/>
+            <br/>
+            <% if (user.avatar == "/assets/blank-profile-picture.jpg") { %>
+                <div style="font-style:italic;">You have no avatar !</div><br/>
+            <% } %>
+            Avatar<br/>
+            <input type="text" name="user[linked_avatar]" placeholder="Link avatar..."><br/><br/>
+            <label class="upload-avatar" for="user_avatar">upload avatar...</label>
+            <input type="file" name="user[avatar]" id="user_avatar">
+            <input type="checkbox" value="remove_avatar" name="user[remove]"> Remove avatar
+            <br/>
+            <br/>
+            <button type="submit" name="commit" class="edit save">update</button>
+            <input value="<%= user.id %>" type="hidden" name="user[id]">
+            <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+        </form>
+        <br/>
+    </div>
+</div>

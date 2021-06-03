@@ -1,0 +1,2 @@
+class GuildWar < ApplicationRecord
+end

@@ -1,0 +1,98 @@
+// Place all the styles related to the Chatrooms controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: https://sass-lang.com/
+
+#main-chatrooms {
+    margin-left: 200px;
+    width: auto;
+    font-family: sans-serif;
+
+    h1 {
+        font-variant: small-caps;
+        text-align: center;
+    }
+
+    .chatrooms-list {
+        margin: auto;
+        max-width: 700px;
+        width: 100%;
+        height: auto;
+        border-collapse: collapse;
+        .chatrooms-list-options {
+            border-top: 1px solid rgba(0, 0, 0, 0.12);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+            &:hover {
+                cursor: pointer;
+                background: rgba(0, 0, 0, 0.2);
+            }
+            td {
+                padding: 0;
+            }
+            td.chatrooms-list {
+                padding-left: 15px;
+                &-main {
+                    padding-top: 15px;
+                    padding-bottom: 15px;
+                    padding-left: 5px;
+                    text-align: left;
+                    .room {
+                        font-size: 17px;
+                        font-weight: bold;
+                        overflow-wrap: break-word;
+                    }
+                    .owner {
+                        font-size: 12px;
+                        font-style: italic;
+                        overflow-wrap: break-word;
+                    }
+                }
+                &-image {
+                    text-align: center;
+                    padding: 0;
+                    width: 50px;
+                    min-width: 50px;
+                }
+                &-join-unjoin {
+                    width: 15%;
+                    padding: 10px;
+                    input[type=submit] {
+                        font-size: 15px;
+                        font-weight: bold;
+                        width: 70px;
+                        padding: 7px;
+                        color: white;
+                        border-radius: 10px;
+                        margin: auto;
+                        text-decoration: none;
+                        border: none;
+                        cursor: pointer;
+                    }
+                    .join {
+                        display: none;
+                        &.active {
+                            display: block;
+                        }
+                        input[type=submit] {
+                            background: rgba(46, 120, 145, 0.7);
+                            &:hover {
+                                background: rgb(48, 109, 129);
+                            }
+                        }
+                    }
+                    .unjoin {
+                        display: none;
+                        &.active {
+                            display: block;
+                        }
+                        input[type=submit] {
+                            background-color: rgba(46, 120, 145, 0.3);
+                            &:hover {
+                                background: rgba(46, 120, 145, 0.5);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

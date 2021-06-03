@@ -1,0 +1,122 @@
+<div id="users-index">
+    <table>
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Guild</th>
+            <th>Score</th>
+            <th></th>
+        </tr>
+        <% if (friends.length == 0) { %>
+            <tr><td style="text-align:center;" colspan="5">You don't have any friends !</td></tr>
+        <% } %>
+        <% friends.forEach(function(friend) { %>
+            <% friendId = (friend.toJSON().user_one_id == Transcendence.current_user.id) ? friend.toJSON().user_two_id : friend.toJSON().user_one_id %>
+            <% user2 = Transcendence.users.get(friendId).toJSON() %>
+            <tr class="users-list">
+                <td style="width:40px;"><img style="width:30px;height:30px;border-radius:50%" src="<%= user2.avatar %>"></td>
+                <td onclick='document.location = "/#users/<%= user2.id %>"' style="text-align:left;">
+                    <%= user2.username %>
+                    <% if (user2.online == true) { %>
+                        <span class="status online"></span>
+                    <% } else { %>
+                        <span class="status offline"></span>
+                    <% } %>
+                </td>
+                <td><% if (user2.guild) { %>[<%= Transcendence.guilds.get(user2.guild).toJSON().anagram %>] <%= Transcendence.guilds.get(user2.guild).toJSON().name %><% } %></td>
+                <td><%= user2.score %></td>
+                <td class="users-action">
+                    <form action="/api/private_rooms" method="post" data-remote="true" class="send-pm" id="<%= user2.id %>">
+                        <button type="submit" class="menu-option">send PM</button>
+                        <input value="<%= Transcendence.current_user.id %>" type="hidden" name="private_room[user1]">
+                        <input value="<%= user2.id %>" type="hidden" name="private_room[user2]">
+                        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                    </form>
+                </td>
+                <td class="users-action">
+                    <form action="/api/friends/<%= friend.toJSON().id %>" method="post" data-remote="true">
+                        <input type="hidden" name="_method" value="delete">
+                        <button type="submit" class="decline-request">unfriend</button>
+                        <input value="<%= user2.id %>" type="hidden" name="user_one_id">
+                        <input value="<%= Transcendence.current_user.toJSON().id %>" type="hidden" name="user_two_id">
+                    </form>
+                </td>
+                <td class="users-action">
+                    <% if (user2.pong != 0) { %>
+                    <form action="/api/pongs/spectate" method="post" data-remote="true">
+                        <button type="submit" class="menu-option">watch game</button>
+                        <input value="<%= user2.pong %>" type="hidden" name="room_id">
+                        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                    </form>
+                    <% } %>
+                </td>
+                <td class="users-action">
+                <% if ((user2.guild == null) && (Transcendence.current_user.toJSON().guild != null)) { %>
+                        <form action="/api/guild_invitations" method="post" data-remote="true">
+                            <button type="submit" class="menu-option">invite to guild</button>
+                            <input value="<%= Transcendence.current_user.toJSON().guild %>" type="hidden" name="guild_id">
+                            <input value="<%= user2.id %>" type="hidden" name="user_id">
+                            <input value="true" type="hidden" name="pending">
+                            <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                        </form>
+                <% } %>
+                </td>
+            </tr>
+        <% }) %>
+    </table>
+    <br/>
+    <% if (pending1.length > 0) { %>
+    <table style="width:min-content;display:inline-table;">
+        <tr>
+            <th colspan="4">Friendship requests</th>
+        </tr>
+        <% pending1.forEach(function(pending) { %>
+            <% user2 = Transcendence.users.get(pending.toJSON().user_two_id).toJSON() %>
+            <tr class="users-list">
+                <td style="width:15%;"><img style="width:30px;height:30px;border-radius:50%" src="<%= user2.avatar %>"></td>
+                <td onclick='document.location = "/#users/<%= user2.id %>"'><%= user2.username %></a></td>
+                <td class="users-action">
+                    <form action="/api/friends/<%= pending.toJSON().id %>" method="post" data-remote="true">
+                        <input type="hidden" name="_method" value="put">
+                        <button type="submit" class="accept-request" style="padding:0;height:30px;width:30px;border-radius:50%">&check;</button>
+                        <input value="<%= user2.id %>" type="hidden" name="user_one_id">
+                        <input value="<%= Transcendence.current_user.toJSON().id %>" type="hidden" name="user_two_id">
+                        <input value="false" type="hidden" name="pending">
+                    </form>
+                </td>
+                <td class="users-action">
+                    <form action="/api/friends/<%= pending.toJSON().id %>" method="post" data-remote="true">
+                        <input type="hidden" name="_method" value="delete">
+                        <button type="submit" class="decline-request" style="padding:0;height:30px;width:30px;border-radius:50%">&cross;</button>
+                        <input value="<%= user2.id %>" type="hidden" name="user_one_id">
+                        <input value="<%= Transcendence.current_user.toJSON().id %>" type="hidden" name="user_two_id">
+                        <input value="false" type="hidden" name="pending">
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+    </table>
+    <% } %>
+    <% if (pending2.length > 0) { %>
+    <table style="width:min-content;display:inline-table;">
+        <tr>
+            <th colspan="4">Requests waiting</th>
+        </tr>
+        <% pending2.forEach(function(pending) { %>
+            <% user2 = Transcendence.users.get(pending.toJSON().user_one_id).toJSON() %>
+            <tr class="users-list">
+                <td style="width:15%;"><img style="width:30px;height:30px;border-radius:50%" src="<%= user2.avatar %>"></td>
+                <td onclick='document.location = "/#users/<%= user2.id %>"'><%= user2.username %></td>
+                <td class="users-action">
+                    <form action="/api/friends/<%= pending.toJSON().id %>" method="post" data-remote="true">
+                        <input type="hidden" name="_method" value="delete">
+                        <button type="submit" class="decline-request">cancel</button>
+                        <input value="<%= user2.id %>" type="hidden" name="user_one_id">
+                        <input value="<%= Transcendence.current_user.toJSON().id %>" type="hidden" name="user_two_id">
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+    </table>
+    <% } %>
+</div>

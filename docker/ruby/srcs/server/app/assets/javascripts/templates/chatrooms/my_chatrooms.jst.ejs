@@ -1,0 +1,41 @@
+<h1>My chatrooms</h1>
+<table class="chatrooms-list">
+    <% if (owned.length == 0 && joined.length == 0) { %>
+        <tr class="chatrooms-list-options">
+            <td class="chatrooms-list-main" style="font-size:20px;text-align:center;">You are not a member of any chatroom !</td>
+        </tr>
+    <% } %>
+    <% owned.forEach(function(model) { %>
+    <tr class="chatrooms-list-options" id="chatroom_<%= model.toJSON().id %>">
+        <td class="chatrooms-list-image">
+            <img style="width: 20px; height: 20px; vertical-align: middle" src="/assets/check.png">
+        </td>
+        <td class="chatrooms-list-main" onclick='document.location = "#chatrooms/<%= model.toJSON().id %>";'>
+            <div class="room"><%= model.toJSON().name %> (owned)</div>
+            <div class="owner">Type: <%= model.toJSON().chatroom_type %>
+            </div>
+        </td>
+        <td class="chatrooms-list-join-unjoin"></td>
+    </tr>
+    <% }) %>
+    <% joined.forEach(function(model) { %>
+    <tr class="chatrooms-list-options" id="chatroom_<%= model.toJSON().id %>">
+        <td class="chatrooms-list-image">
+            <img style="width: 20px; height: 20px; vertical-align: middle" src="/assets/check.png">
+        </td>
+        <td class="chatrooms-list-main" onclick='document.location = "#chatrooms/<%= model.toJSON().id %>";'>
+            <div class="room"><%= model.toJSON().name %></div>
+            <div class="owner">Owner: <%= Transcendence.users.get(model.toJSON().owner).toJSON().username %>,  Type: <%= model.toJSON().chatroom_type %>
+            </div>
+        </td>
+        <td class="chatrooms-list-join-unjoin">
+            <form action="/api/chatrooms/<%= model.toJSON().id %>/unjoin" type="submit" method="post"
+                class="unjoin active" data-remote="true"><input type="hidden" name="_method" value="put">
+                <input type="submit" value="unjoin">
+                <input type="hidden" name="authenticity_token"
+                    value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+            </form>
+        </td>
+    </tr>
+    <% }) %>
+</table>

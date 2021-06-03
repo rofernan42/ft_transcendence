@@ -1,0 +1,60 @@
+<h1>Private chatrooms</h1>
+<table class="chatrooms-list">
+    <% if (chatrooms.length == 0) { %>
+        <tr class="chatrooms-list-options">
+            <td class="chatrooms-list-main" style="font-size:20px;text-align:center;">There are no private chatrooms !</td>
+        </tr>
+    <% } %>
+    <% chatrooms.forEach(function(model) { %>
+    <tr class="chatrooms-list-options" id="chatroom_<%= model.toJSON().id %>">
+        <td class="chatrooms-list-image">
+            <% if (model.toJSON().banned.includes(Transcendence.current_user.id)) { %>
+            <img style="width: 20px; height: 20px; vertical-align: middle" src="/assets/block.png">
+            <% } else if (!model.toJSON().members.includes(Transcendence.current_user.id) && Transcendence.current_user.id != model.toJSON().owner) { %>
+            <img style="width: 20px; height: 20px; vertical-align: middle" src="/assets/padlock.png">
+            <% } else { %>
+            <img style="width: 20px; height: 20px; vertical-align: middle" src="/assets/check.png">
+            <% } %>
+        </td>
+        <td class="chatrooms-list-main" onclick='document.location = "#chatrooms/<%= model.toJSON().id %>";'>
+            <div class="chatrooms-list room"><%= model.toJSON().name %></div>
+            <div class="chatrooms-list owner">Owner: <%= Transcendence.users.get(model.toJSON().owner).toJSON().username %>
+            </div>
+        </td>
+        <td class="chatrooms-list-join-unjoin">
+            <% if (!model.toJSON().members.includes(Transcendence.current_user.id) && Transcendence.current_user.id != model.toJSON().owner) { %>
+            <% join = "active"; unjoin = "" %>
+            <% } else { %>
+            <% join = ""; unjoin = "active" %>
+            <% } %>
+            <div class="join <%= join %>" id="chatrooms-private" data-id="<%= model.toJSON().id %>"
+                onclick='$("#password-modal-<%= model.toJSON().id %>").show()'>
+                <input type="submit" value="join">
+            </div>
+            <form action="/api/chatrooms/<%= model.toJSON().id %>/unjoin" type="submit" method="post"
+                class="unjoin <%= unjoin %>" data-remote="true"><input type="hidden" name="_method" value="put">
+                <input type="submit" value="unjoin">
+                <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+            </form>
+            <div id="password-modal-<%= model.toJSON().id %>" class="modal">
+                <div class="modal-content">
+                    <span id="close" class="close-<%= model.toJSON().id %>" onclick='$("#password-modal-<%= model.toJSON().id %>").hide()'>&times;</span><br/>
+                    <div class="modal-header">
+                        <img class="padlock-image" src="/assets/padlock.png"><br/>
+                        <%= model.toJSON().name %> is locked by a password
+                    </div>
+                    <br/>
+                    <form action="/api/chatrooms/<%= model.toJSON().id %>/login" type="submit" method="post" data-remote="true">
+                        <div class="modal-body">
+                            <input type="password" placeholder="Enter password..." name="chatroom[chatroom_password]">
+                            <button type="submit" class="button-password"><img style="padding:0;width:25px;height:25px;vertical-align:middle;" src="/assets/send.png"></button>
+                            <input value="<%= model.toJSON().id %>" type="hidden" name="chatroom[chatroom_id]">
+                            <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <% }) %>
+</table>

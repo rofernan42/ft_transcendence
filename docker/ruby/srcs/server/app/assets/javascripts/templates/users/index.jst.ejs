@@ -1,0 +1,47 @@
+<div id="users-index">
+    <table>
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Guild</th>
+            <th>Score</th>
+            <th></th>
+        </tr>
+        <% Transcendence.users.each(function(model) { %>
+        <tr class="users-list">
+            <td style="width:40px;"><img style="width:30px;height:30px;border-radius:50%" src="<%= model.toJSON().avatar %>"></td>
+            <td onclick='document.location = "/#users/<%= model.toJSON().id %>"' style="text-align:left;">
+                <%= model.toJSON().username %>
+                <% if (model.toJSON().online == true) { %>
+                    <span class="status online"></span>
+                <% } else { %>
+                    <span class="status offline"></span>
+                <% } %>
+            </td>
+            <td><% if (model.toJSON().guild && Transcendence.guilds.get(model.toJSON().guild)) { %>[<%= Transcendence.guilds.get(model.toJSON().guild).toJSON().anagram %>] <%= Transcendence.guilds.get(model.toJSON().guild).toJSON().name %><% } %></td>
+            <td><%= model.toJSON().score %></td>
+            <td class="users-action">
+                <% if (model.toJSON().id != Transcendence.current_user.id) { %>
+                    <% if (model.toJSON().pong != 0) { %>
+                    <form action="/api/pongs/spectate" method="post" data-remote="true">
+                        <button type="submit" class="menu-option">watch game</button>
+                        <input value="<%= model.toJSON().pong %>" type="hidden" name="room_id">
+                        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                    </form>
+                    <% } %>
+                <% } %>
+            </td>
+            <td class="users-action">
+                <% if (model.toJSON().id != Transcendence.current_user.id) { %>
+                <form action="/api/private_rooms" method="post" data-remote="true" class="send-pm" id="<%= model.toJSON().id %>">
+                    <button type="submit" class="menu-option">send PM</button>
+                    <input value="<%= Transcendence.current_user.id %>" type="hidden" name="private_room[user1]">
+                    <input value="<%= model.toJSON().id %>" type="hidden" name="private_room[user2]">
+                    <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                </form>
+                <% } %>
+            </td>
+        </tr>
+        <% }) %>
+    </table>
+</div>

@@ -1,0 +1,40 @@
+<div class="user1">
+    <img src="<%= user1.avatar %>">
+    <h1>
+        <%= user1.username %>'s profile
+        <% if (user1.online == true) { %>
+        <span class="status online"></span>
+        <% } else { %>
+        <span class="status offline"></span>
+        <% } %>
+    </h1>
+    <% if (Transcendence.current_user.toJSON().id == user1.id) { %>
+        <form action="/api/games/<%= match.id %>" accept-charset="UTF-8" method="post" data-remote="true">
+            <input type="hidden" name="_method" value="delete">
+            <button type="submit" class="delete">Cancel</button>
+            <input type="hidden" name="authenticity_token"
+                    value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+        </form>
+    <% } %>
+</div>
+<% if (user2 != null) { %>
+<div class="user2">
+    <img src="<%= user2.avatar %>">
+    <h1>
+        <%= user2.username %>'s profile
+        <% if (user2.online == true) { %>
+        <span class="status online"></span>
+        <% } else { %>
+        <span class="status offline"></span>
+        <% } %>
+    </h1>
+    <% if (Transcendence.current_user.toJSON().id == user2.id) { %>
+        <form action="/api/games/<%= match.id %>" accept-charset="UTF-8" method="post" data-remote="true">
+            <input type="hidden" name="_method" value="delete">
+            <button type="submit" class="delete">Cancel</button>
+            <input type="hidden" name="authenticity_token"
+                    value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+        </form>
+    <% } %>
+</div>
+<% } %>

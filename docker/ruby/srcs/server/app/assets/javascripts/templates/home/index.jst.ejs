@@ -1,0 +1,60 @@
+<div id="home-page">
+    <h1>
+        WELCOME TO TRANSCENDENCE
+    </h1>
+    <% if (Transcendence.current_user.toJSON().admin) { %>
+        <div style="text-align:center;"><a href="#admin_panel"><button>admin panel</button></a></div>
+    <% } %>
+    <h1>
+        Friends and Chatrooms
+    </h1>
+    <p>
+        Here you can have friend and talk to them ! Join the section chatroom,
+        create your channel or join one if you want !
+        YOU can do whatever you want here, more friend you have,
+        more allies you get ! But care you can fight them whenever you want during the matchmaking
+        or via a duel request .....
+    </p>
+    <h1> 
+        Guild
+    </h1>
+    <p>
+        Create your own Guild or join any of them ! Everyhting Guild will fight for their value trying to grind the Guild's ladder
+        You can invite your friend thus you will be stronger against other Guild !
+    </p>
+    <h1>
+        Guild War
+    </h1>
+    <p>
+        Stay aware, every guild can fight each other ! During a war you might want to play as well as you can, if ladder is up, every match in ladder
+        will be counted towards war's effort! Care, during a war every member of opposite guild can challenge you with a duel request in the guild interface!
+        If you decline this request you might cause your guild to lost this war, so fight dont' run you coward !
+    </p>
+    <h1>
+        The Game
+    </h1>
+    <p>
+        Purpose of this website, fight everyone during epic fight in a pong game ! All shots are allowed you want to be the best of the best !
+        Admin can create tournaments, thus you will fight other player till the last one stay alive !
+        Can counts during war effort!
+        You can control the paddle with W for up and S for down
+
+        What are you wating for ?
+    </p>
+    <br>
+    <a href="#games" style="text-decoration:none;"><button id="play-id">PLAY</button></a>
+</div>
+
+<% if (Transcendence.current_user.toJSON().first_time == true) { %>
+<div id="firsttime-modal" class="modal" style="display:block;z-index:150;">
+    <div class="modal-content">
+        <div class="modal-header">
+            First time ?<br/>
+            Personalise your profile !
+        </div>
+        <br/>
+        <a href="#users/edit_profile"><button class="confirm-choice edit-profile">Edit profile</button></a>
+        <button class="confirm-choice">Later</button>
+    </div>
+</div>
+<% } %>

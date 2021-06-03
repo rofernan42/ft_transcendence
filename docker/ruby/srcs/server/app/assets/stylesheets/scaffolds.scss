@@ -1,0 +1,85 @@
+body {
+  background-color:rgb(240, 240, 240);
+  color: #333;
+  margin-top: 40px;
+  // background: url("bg-image.jpg") no-repeat center center fixed;
+  // background-size: cover;
+}
+
+img {
+  padding: 0;
+  border-radius: 0px;
+}
+
+h1 {
+  font-family: Impact;
+  text-align: center;
+  white-space: nowrap;
+}
+
+body, p, ol, ul, td {
+  font-family: sans-serif, verdana, arial, helvetica;
+  font-size: 13px;
+  line-height: 18px; }
+
+@font-face {
+  font-family: Impact;
+  src: url('/fonts/impact.ttf') format('truetype');
+}
+
+pre {
+  background-color: #eee;
+  padding: 10px;
+  font-size: 11px; }
+
+a {
+  color: #000; }
+
+a:visited {
+  color: #666; }
+
+th {
+  padding-bottom: 5px; }
+
+td {
+  padding: 0 5px 7px; }
+
+div.field,
+div.actions {
+  margin-bottom: 10px; }
+
+#notice {
+  color: green; }
+
+.field_with_errors {
+  margin: auto;
+  padding: 2px;
+  background-color: red;
+  display: table; }
+
+#error_explanation {
+  width: auto;
+  background-color: rgba(241, 6, 6, 0.6);
+  border: 1px solid;
+  border-color: rgb(148, 4, 4);
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 20px;
+  color: black;
+}
+
+#error_explanation h2 {
+  text-align: center;
+  font-weight: bold;
+  padding: 5px;
+  font-size: 15px;
+  margin: 0;
+  background-color: #c00;
+  color: #fff; }
+
+#error_explanation ul li {
+  font-size: 15px;
+  list-style: none; }
+
+label {
+  display: block; }

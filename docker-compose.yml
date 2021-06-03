@@ -1,0 +1,39 @@
+version: '2.3'
+services:
+  ruby:
+    build: ./docker/ruby/
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./docker/ruby/srcs:/data
+    environment:
+      REDIS_DB: 0
+      REDIS_URL: "redis://redis"
+      REDIS_PORT: 6379
+      SERVER_DATABASE_PASSWORD: root
+      TZ: Europe/Paris
+      OAUTH_CLIENT: a80eaa8c19ae8af60d94a555cf1628b3d24e31d8cee1bc17604848e1359cbe28
+      OAUTH_SECRET: ac057ddcea6656055efd4541f8b0c9d20257d614804838260191ec826ea43276
+      TOTP_KEY: XbyTh9YX4ti78E23juJTg7P7Lcy9499DpkP
+      ENCRYPTION_KEY: 00805870a2147e34eda3777504a715580c60c5d88323c477118ecedcfc582216
+    tty: true
+    stdin_open: true
+    healthcheck:
+      test: "curl -m 20 -f http://127.0.0.1:3000 || bash /data/server/kill.sh"
+      interval: 30s
+      timeout: 30s
+      retries: 2
+      start_period: 60s
+    restart: always
+  postgresql:
+    build: ./docker/postgresql
+    environment:
+      POSTGRES_PASSWORD: root
+      TZ: Europe/Paris
+  redis:
+    image: "redis:alpine"
+    command: redis-server --bind redis --port 6379
+    volumes:
+      - ./docker/redis/redis-data:/var/lib/redis
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+

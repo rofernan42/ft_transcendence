@@ -1,0 +1,66 @@
+<div id="chatroom-edit-panel"></div>
+<div id="sidenav">
+    <form class="sideform" action="/api/chatrooms" accept-charset="UTF-8" method="post" data-remote="true">
+        <input value="<%= Transcendence.current_user.id %>" type="hidden" name="chatroom[owner]">
+        <input autocomplete="off" type="text" name="chatroom[name]" placeholder="Chatroom name...">
+        <input type="hidden" value="public" name="chatroom[chatroom_type]">
+        <br/>
+        <input type="checkbox" value="private" name="chatroom[chatroom_type]" onclick='$("#edit-password-field").slideToggle(300)'> Private chatroom<br/>
+        <div id="edit-password-field"><input autocomplete="off" type="password" name="chatroom[password]" placeholder="Type password..."></div>
+        <div style="padding:5px;"><button type="submit" name="commit" class="edit save">Create a chatroom</button></div>
+        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+    </form>
+    <table>
+        <tr>
+            <td id="optpublic" style="border-bottom: 1px solid rgba(0, 0, 0, 0.12);" class="sideopt" onclick='document.location="/#chatrooms/public";'>Public chatrooms</td>
+        </tr>
+        <tr>
+            <td id="optpriv" style="border-bottom: 1px solid rgba(0, 0, 0, 0.12);" class="sideopt" onclick='document.location="/#chatrooms/private"'>Private chatrooms</td>
+        </tr>
+        <tr>
+            <td id="optmych" style="border-bottom: 1px solid rgba(0, 0, 0, 0.12);" class="sideopt" onclick='document.location="/#chatrooms/my_chatrooms"'>My chatrooms</td>
+        </tr>
+        <tr>
+            <td class="sideopt" onclick='document.location="/#private_rooms"'>PM</td>
+        </tr>
+    </table>
+</div>
+<div id="main-chats">
+    <table id="chatroom-contents">
+        <tr>
+            <td class="members-title">
+                <img src="assets/previous.png" style="cursor:pointer;float:left;width:20px;height:20px" onclick="document.location='#chatrooms/<%= chatroom.chatroom_type %>'">
+                Members
+            </td>
+            <td class="chatroom-title">
+                <%= chatroom.name %> (<%= chatroom.chatroom_type %>)
+            </td>
+        </tr>
+        <tr>
+            <td id="members-content">
+                <div id="members"></div>
+            </td>
+            <td id="room-content">
+                <div id="messages"></div>
+                <div id="send_message">
+                    <form action="/api/chats" class="send-message-field" accept-charset="UTF-8" data-remote="true" method="post">
+                        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                        <table>
+                            <tr>
+                                <td class="text"><input placeholder="New message..." autocomplete="off" type="text"
+                                        class="text-field" id="text-field" required="required" name="chat[message]"></td>
+                                <td class="button"><input type="submit" class="button-field" value="send" name="commit"></td>
+                            </tr>
+                        </table>
+                        <input value="<%= Transcendence.current_user.id %>" type="hidden" name="chat[user_id]">
+                        <input as="hidden" type="hidden" value="<%= chatroom.id %>" name="chat[chatroom_id]">
+                    </form>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="current_chatroom_id" data-roomid="<%= chatroom.id %>"></div>
+
+<div id="flash-messages"></div>

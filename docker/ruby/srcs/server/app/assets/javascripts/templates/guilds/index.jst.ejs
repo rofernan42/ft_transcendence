@@ -1,0 +1,41 @@
+<div id="sidenav" class="guilds-sidenav"></div>
+
+<div id="users-index" style="margin-left:200px;">
+    <table>
+        <tr>
+            <th>Guild name</th>
+            <th>Owner</th>
+            <th>Score</th>
+        </tr>
+        <% if (Transcendence.guilds.length == 0) { %>
+            <tr>
+                <td colspan="3">There are no guilds !</td>
+            </tr>
+        <% } %>
+        <% Transcendence.guilds.each(function(guild) { %>
+        <tr class="users-list">
+            <td onclick='document.location = "/#guilds/<%= guild.toJSON().id %>"'>[<%= guild.toJSON().anagram %>] <%= guild.toJSON().name %></td>
+            <td onclick='document.location = "/#users/<%= guild.toJSON().owner %>"'><%= Transcendence.users.get(guild.toJSON().owner).toJSON().username %></td>
+            <td><%= guild.toJSON().points %></td>
+            <% if (Transcendence.current_user.toJSON().guild == null) { %>
+            <td class="users-action">
+                <form action="/api/guilds/join_guild" method="post" data-remote="true">
+                    <button type="submit">join</button>
+                    <input value="<%= guild.toJSON().id %>" type="hidden" name="guild_id">
+                    <input value="<%= Transcendence.current_user.id %>" type="hidden" name="user_id">
+                    <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                </form>
+            </td>
+            <% } else if (Transcendence.current_user.toJSON().guild == guild.toJSON().id) { %>
+            <td class="users-action">
+                <form action="/api/guilds/leave_guild" accept-charset="UTF-8" method="post" data-remote="true">
+                    <input type="hidden" name="current_id" value="<%= Transcendence.current_user.toJSON().id %>">
+                    <button type="submit" class="decline-request">leave</button>
+                    <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                </form>
+            </td>
+            <% } else { %><td></td><% } %>
+        </tr>
+        <% }) %>
+    </table>
+</div>

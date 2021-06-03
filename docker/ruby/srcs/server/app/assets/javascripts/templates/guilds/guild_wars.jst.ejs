@@ -1,0 +1,138 @@
+<div id="sidenav" class="guilds-sidenav"></div>
+
+<div id="users-index" style="margin-left:200px;">
+    <% if (!curguild.war) { %>
+        <div style="margin:auto;padding:10px;border-radius:10px;background:rgb(250, 250, 250);width:500px">
+            <h1>There is no war happening...</h1>
+        </div>
+    <% } %>
+    <% Transcendence.guild_wars.each(function(war) { %>
+        <% if (curguild.war == war.toJSON().id) { %>
+            <div style="margin:auto;padding:10px;border-radius:10px;background:rgb(250, 250, 250);min-width:500px;width:min-content;">
+                <% if (war.toJSON().started == true) { %>
+                    <h1>There is a war happening !</h1>
+                <% } else { %>
+                    <h1>A war will begin on the <%= war.toJSON().start.split("T")[0] %> at <%= war.toJSON().start.split("T")[1].split(".")[0] %> !</h1>
+                <% } %>
+                <div style="font-size:20px;line-height:30px;">
+                    End date: <b><%= war.toJSON().end.split("T")[0] %> at <%= war.toJSON().end.split("T")[1].split(".")[0] %></b><br/>
+                    War time start: <b><%= war.toJSON().start_war_time.split("T")[0] %> at <%= war.toJSON().start_war_time.split("T")[1].split(".")[0] %></b><br/>
+                    War time end: <b><%= war.toJSON().end_war_time.split("T")[0] %> at <%= war.toJSON().end_war_time.split("T")[1].split(".")[0] %></b><br/>
+                    <%= Transcendence.guilds.get(war.toJSON().guild_one_id).toJSON().name %> points: <b><%= war.toJSON().guild_one_points %></b><br/>
+                    <%= Transcendence.guilds.get(war.toJSON().guild_two_id).toJSON().name %> points: <b><%= war.toJSON().guild_two_points %></b><br/>
+                    Prize: <b><%= war.toJSON().prize %></b><br/>
+                    Tournaments: <b><%= war.toJSON().tournaments %></b><br/>
+                    Ladder: <b><%= war.toJSON().ladder %></b><br/>
+                </div>
+                <% if (Transcendence.current_user.toJSON().id == curguild.owner) { %>
+                <br/>
+                <div class="users-action" style="margin:auto;"> 
+                    <form action="/api/guild_wars/forfeit/<%= war.toJSON().id %>" method="post" data-remote="true">
+                        <input type="hidden" name="_method" value="put">
+                        <input value="<%= curguild.id %>" type="hidden" name="guild_forfeit">
+                        <button type="submit" class="decline-request">forfeit</button>
+                        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                    </form>
+                </div>
+                <% } %>
+            </div>
+        <% } %>
+    <% }) %>
+    <br/>
+    <% if (Transcendence.current_user.toJSON().id == curguild.owner) { %>
+    <table>
+        <tr>
+            <th colspan="7">Wars request</th>
+        </tr>
+        <% if (warreq.length == 0) { %>
+            <tr>
+                <td>You don't have any war request !</td>
+            </tr>
+        <% } else { %>
+        <% warreq.forEach(function (req) { %>
+            <% if (Transcendence.guilds.get(req.toJSON().guild_one_id)) { %>
+            <% var vsguild = Transcendence.guilds.get(req.toJSON().guild_one_id).toJSON() %>
+            <tr class="users-list">
+                <td onclick="document.location='/#guilds/<%= vsguild.id %>'">[<%= vsguild.anagram %>] <%= vsguild.name %></td>
+                <td style="font-family:Impact;"><%= vsguild.points %></td>
+                <td onclick='$("#parameters-modal-<%= req.toJSON().id %>").show()'>See war parameters</td>
+                <td class="users-action" style="width:0%;">
+                    <form action="/api/guild_wars/accept_request/<%= req.toJSON().id %>" accept-charset="UTF-8" method="post" data-remote="true">
+                        <input type="hidden" name="_method" value="put">
+                        <input type="hidden" name="pending" value="false">
+                        <button type="submit" class="accept-request" style="padding:0;height:30px;width:30px;border-radius:50%">&check;</button>
+                        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                    </form>
+                </td>
+                <td class="users-action" style="width:0%;">
+                    <form action="/api/guild_wars/<%= req.toJSON().id %>" method="post" data-remote="true">
+                        <input type="hidden" name="_method" value="delete">
+                        <button type="submit" class="decline-request" style="padding:0;height:30px;width:30px;border-radius:50%">&cross;</button>
+                        <input value="true" type="hidden" name="pending">
+                        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                    </form>
+                </td>
+            </tr>
+            <div id="parameters-modal-<%= req.toJSON().id %>" class="modal">
+                <div class="modal-content">
+                    <span id="close" onclick='$("#parameters-modal-<%= req.toJSON().id %>").hide()'>&times;</span><br/>
+                    <div class="modal-header">
+                        War parameters
+                    </div><br/>
+                    <div style="font-size:20px;line-height:30px;">
+                        Start date: <b><%= req.toJSON().start.split("T")[0] %> <%= req.toJSON().start.split("T")[1].split(".")[0] %></b><br/>
+                        End date: <b><%= req.toJSON().end.split("T")[0] %> <%= req.toJSON().end.split("T")[1].split(".")[0] %></b><br/>
+                        Start war time date: <b><%= req.toJSON().start_war_time.split("T")[0] %> <%= req.toJSON().start_war_time.split("T")[1].split(".")[0] %></b><br/>
+                        End war time date: <b><%= req.toJSON().end_war_time.split("T")[0] %> <%= req.toJSON().end_war_time.split("T")[1].split(".")[0] %></b><br/>
+                        Prize: <b><%= req.toJSON().prize %></b><br/>
+                        Tournaments: <b><%= req.toJSON().tournaments %></b><br/>
+                        Ladder: <b><%= req.toJSON().ladder %></b><br/>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+        <% })} %>
+    </table>
+    <br/>
+    <% if (wardem.length > 0) { %>
+    <table>
+        <tr>
+            <th colspan="7">Wars demands</th>
+        </tr>
+        <% wardem.forEach(function (dem) { %>
+            <% if (Transcendence.guilds.get(dem.toJSON().guild_two_id)) { %>
+            <% var vsguild = Transcendence.guilds.get(dem.toJSON().guild_two_id).toJSON() %>
+            <tr class="users-list">
+                <td onclick="document.location='/#guilds/<%= vsguild.id %>'">[<%= vsguild.anagram %>] <%= vsguild.name %></td>
+                <td style="font-family:Impact;"><%= vsguild.points %></td>
+                <td onclick='$("#parameters-modal-<%= dem.toJSON().id %>").show()'>See war parameters</td>
+                <td class="users-action" style="width:0%;">
+                    <form action="/api/guild_wars/<%= dem.toJSON().id %>" method="post" data-remote="true">
+                        <input type="hidden" name="_method" value="delete">
+                        <button type="submit" class="decline-request">cancel</button>
+                        <input value="true" type="hidden" name="pending">
+                        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                    </form>
+                </td>
+            </tr>
+            <div id="parameters-modal-<%= dem.toJSON().id %>" class="modal">
+                <div class="modal-content">
+                    <span id="close" onclick='$("#parameters-modal-<%= dem.toJSON().id %>").hide()'>&times;</span><br/>
+                    <div class="modal-header">
+                        War parameters
+                    </div><br/>
+                    <div style="font-size:20px;line-height:30px;">
+                        Start date: <b><%= dem.toJSON().start.split("T")[0] %> <%= dem.toJSON().start.split("T")[1].split(".")[0] %></b><br/>
+                        End date: <b><%= dem.toJSON().end.split("T")[0] %> <%= dem.toJSON().end.split("T")[1].split(".")[0] %></b><br/>
+                        Prize: <b><%= dem.toJSON().prize %></b><br/>
+                        Tournaments: <b><%= dem.toJSON().tournaments %></b><br/>
+                        Ladder: <b><%= dem.toJSON().ladder %></b><br/>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+        <% }) %>
+    </table>
+    <% } %>
+    <% } %>
+</div>

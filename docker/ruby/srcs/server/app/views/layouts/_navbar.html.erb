@@ -1,0 +1,40 @@
+<nav id="navbar">
+    <ul class="navbar-options" style="text-align: center;">
+        <% if user_signed_in? %>
+            <li><a class="nav-option option-home" href="/#" style="width:100px;">home</a></li
+            ><li><a class="nav-option option-play" href="/#games" style="width:100px;">play</a></li
+            ><li><a class="nav-option option-chatrooms" href="/#chatrooms" style="width:100px;">social</a></li
+            ><li><a class="nav-option option-members" href="/#users" style="width:100px;">members</a></li
+            ><li><a class="nav-option option-guilds" href="/#guilds" style="width:100px;">guilds</a></li
+            ><li style="background-color:rgb(54, 54, 54);"><a class="nav-option option-user slide-down-menu" style="font-size:20px;padding-left:10px;padding-right:10px;"><%= current_user.username %> <img src="<%= current_user.avatar %>"></a>
+            <div class="slide-down-options option-user">
+                <a href="/#users/<%= current_user.id %>">see profile</a>
+                <a href="/#private_rooms">private messages</a>
+                <a href="/#users/friends">Friends</a>
+                <a href="/users/sign_out" data-method="delete" rel="nofollow" style="border-top:solid 2px rgb(54, 54, 54);">log out</a>
+            </div></li>
+        <% else %>
+            <li><a href="/#" style="width:100px;">home</a></li
+            ><li><a class="nav-option" href="/users/sign_in" style="width:100px">sign in</a></li
+            ><li><a class="nav-option" href="/users/sign_up" style="width:100px">sign up</a></li
+            ><li></li>
+        <% end %>
+    </ul>
+</nav>
+
+<script type="text/javascript">
+    $(document).on("click", function () {
+        $(".slide-down-options").hide();
+    });
+    $(".slide-down-menu").on("click", function (event) {
+        if (!$(event.target).next(event.target.nextElementSibling).is(":visible"))
+            $(".slide-down-options").hide();
+        event.stopPropagation();
+        $(event.target).next(event.target.nextElementSibling).slideToggle("fast");
+    });
+    // $(".nav-option").on("click", function (event) {
+    //     $(".nav-option").removeClass("active")
+    //     event.stopPropagation();
+    //     $(event.target).addClass("active")
+    // });
+</script>

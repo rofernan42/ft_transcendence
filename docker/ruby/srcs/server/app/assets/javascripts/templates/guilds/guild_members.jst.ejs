@@ -1,0 +1,95 @@
+<table class="guild-members-list">
+    <tr><th colspan="5">Members</th></tr>
+    <% Transcendence.users.each(function(model) { %>
+    <% if (model.toJSON().guild == curguild.id) { %>
+    <tr>
+        <td><img style="width:20px;height:20px;border-radius:50%" src="<%= model.toJSON().avatar %>"></td>
+        <% if ((Transcendence.current_user.toJSON().admin == true || curguild.owner == Transcendence.current_user.id || (Transcendence.current_user.toJSON().officer == true && Transcendence.current_user.toJSON().guild == curguild.id))
+        && (Transcendence.current_user.id != model.id && model.id != curguild.owner)) { %>
+        <td style="width:100%;" class="guild-user-menu <%= model.id %>"><%= model.toJSON().username %></td>
+        <% } else { %>
+        <td style="width:100%;" onclick="document.location='/#users/<%= model.id %>'"><%= model.toJSON().username %></td>
+        <% } %>
+        <% if (model.toJSON().id == curguild.owner) {
+            usergrade = "Master"
+        } else if (model.toJSON().officer == true) {
+            usergrade = "Officer"
+        } else if (model.toJSON().member == true) {
+            usergrade = "VIP Member"
+        } else {
+            usergrade = "Member"
+        } %>
+        <td class="users-action"> 
+        <% if ((model.toJSON().id != Transcendence.current_user.id) && (model.toJSON().pong != 0)) { %>
+                <form action="/api/pongs/spectate" method="post" data-remote="true" class="send-pm" id="<%= model.toJSON().id %>">
+                    <button type="submit" class="menu-option">watch game</button>
+                    <input value="<%= model.toJSON().pong %>" type="hidden" name="room_id">
+                    <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                </form>           
+        <% } else if (war_time == true) { %>
+            <% if ((Transcendence.current_user.toJSON().guild == guild_two.id) && (model.toJSON().online = true)) { %>
+                    <form action="/api/pongs/duel_demand" method="post" data-remote="true" class="send-pm" id="owner-<%= model.toJSON().id %>">
+                        <button type="submit" class="menu-option">war duel</button>
+                        <input value="<%= Transcendence.current_user.id %>" type="hidden" name="user_one_id">
+                        <input value="<%= model.toJSON().id %>" type="hidden" name="user_two_id">
+                        <input type="hidden" value="true" type="hidden" name="war">
+                        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                    </form>
+            <% } %>
+        <% } %>
+        </td>
+        <td style="font-family:Impact;text-align:right;"><%= usergrade %></td>
+    </tr>
+    <% } %>
+    <% }) %>
+</table>
+<div class="actions-menu">
+    <ul>
+        <li><a class="actions-menu-link" href="#users/">profile</a></li>
+        <% if (Transcendence.current_user.toJSON().admin == true || Transcendence.current_user.id == curguild.owner) { %>
+        <li>
+            <form action="/api/guilds/promote" method="post" data-remote="true">
+                <input type="submit" value="promote">
+                <input type="hidden" name="current_id" class="actions-menu-option" value="">
+                <input type="hidden" name="id" value="<%= curguild.id %>">
+                <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+            </form>
+        </li>
+        <li>
+            <form action="/api/guilds/demote" method="post" data-remote="true">
+                <input type="submit" value="demote">
+                <input type="hidden" name="current_id" class="actions-menu-option" value="">
+                <input type="hidden" name="id" value="<%= curguild.id %>">
+                <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+            </form>
+        </li>
+        <% } %>
+        <li>
+            <form action="/api/guilds/kick" method="post" data-remote="true">
+                <input type="submit" value="kick">
+                <input type="hidden" name="current_id" class="actions-menu-option" value="">
+                <input type="hidden" name="id" value="<%= curguild.id %>">
+                <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+            </form>
+        </li>
+    </ul>
+</div>
+
+<script type="text/javascript">
+    $(".guild-user-menu").click(function (e) {
+        var userid = $(e.target).attr("class").split(' ')[1];
+        var profile = "/#users/" + userid
+        e.stopPropagation();
+        var top = e.pageY + 5;
+        var left = e.pageX;
+        $(".actions-menu").toggle().css({
+            top: top + "px",
+            left: left + "px"
+        });
+        $(".actions-menu-link").attr("href", profile)
+        $(".actions-menu-option").attr("value", userid)
+    });
+    $(document).bind("click", function () {
+        $(".actions-menu").hide()
+    });
+</script>

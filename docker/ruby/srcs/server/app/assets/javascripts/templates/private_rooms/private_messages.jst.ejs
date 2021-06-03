@@ -1,0 +1,36 @@
+<script type="text/javascript">
+    var pmElement = document.getElementById('private-messages');
+    pmElement.scrollTop = pmElement.scrollHeight - pmElement.clientHeight;
+</script>
+
+<% $.each(pm, function() { %>
+    <% if (!Transcendence.current_user.toJSON().block_list.includes(this.user_id)) { %>
+        <table class="<%= Transcendence.current_user.id == this.user_id ? 'sent' : 'received' %>">
+            <tr>
+                <% if (Transcendence.current_user.id != this.user_id) { %>
+                <td class="message-user">
+                    <a href="/#users/<%= this.user_id %>"><img class="user-avatar" src="<%= Transcendence.users.get(this.user_id).toJSON().avatar %>"></a>
+                    <div class="message-footer"><%= this.date_creation %></div>
+                </td>
+                <% } %>
+                <td class="message-content">
+                    <div class="message-header">
+                        <% if (anagram = getAnagram(this.user_id)) { %>
+                            [<%= anagram %>]
+                        <% } %>
+                        <%= Transcendence.users.get(this.user_id).toJSON().username %>
+                    </div>
+                    <div class="message-text"><%= this.message %></div>
+                </td>
+                <% if (Transcendence.current_user.id == this.user_id) { %>
+                <td class="message-user">
+                    <img class="user-avatar" src="<%= Transcendence.users.get(this.user_id).toJSON().avatar %>">
+                    <div class="message-footer"><%= this.date_creation %></div>
+                </td>
+                <% } %>
+            </tr>
+        </table>
+    <% } else { %>
+        <span style="color:black;font-style:italic;">&emsp;You have blocked <%= Transcendence.users.get(this.user_id).toJSON().username %>.</span>
+    <% } %>
+<% }) %>

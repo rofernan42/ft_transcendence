@@ -1,0 +1,2 @@
+class Pong < ApplicationRecord
+end

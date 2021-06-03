@@ -1,0 +1,1 @@
+json.array! @guild_wars, partial: "guild_wars/guild_war", as: :guild_war

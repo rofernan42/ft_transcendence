@@ -1,0 +1,27 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  start: 2021-04-23 12:26:45
+  end: 2021-04-23 12:26:45
+  prize: 
+  guild_one_id: 
+  guild_two_id: 
+  guild_one_points: 
+  guild_two_points: 
+  unanswered_match: 
+  duels: false
+  ladder: false
+  addons: false
+
+two:
+  start: 2021-04-23 12:26:45
+  end: 2021-04-23 12:26:45
+  prize: 
+  guild_one_id: 
+  guild_two_id: 
+  guild_one_points: 
+  guild_two_points: 
+  unanswered_match: 
+  duels: false
+  ladder: false
+  addons: false

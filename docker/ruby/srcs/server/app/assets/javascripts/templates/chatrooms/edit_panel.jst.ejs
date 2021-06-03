@@ -1,0 +1,70 @@
+<div id="edit-panel" style="margin-left:200px">
+    <div class="panel">
+        <span class="closebtn" onclick="$('#chatroom-edit-panel').hide()">&times;</span><br/><br/>
+        <div class="header">
+            <h1>Edit panel</h1>
+        </div>
+        <form id="update-chatroom" action="/api/chatrooms/<%= chatroom.id %>" accept-charset="UTF-8" method="post"
+            data-remote="true">
+            <input type="hidden" name="_method" value="patch">
+            <input value="<%= chatroom.owner %>" type="hidden" name="chatroom[owner]">
+            Name<br/>
+            <input autocomplete="off" type="text" value="<%= chatroom.name %>" name="chatroom[name]">
+            <br/>
+            <br/>
+            <div class="field-type">
+                <% if (chatroom.chatroom_type == "private") { %>
+                <input type="checkbox" value="public" name="chatroom[chatroom_type]"> Change to public<br/>
+                Change password<br/><i style="font-size:12px">(leave blank if you don't want to change)</i></br>
+                <input autocomplete="off" type="password" name="chatroom[password]">
+                <% } else if (chatroom.chatroom_type == "public") { %>
+                <input type="checkbox" value="private" name="chatroom[chatroom_type]" onclick='$("#edit-panel-password-field").slideToggle(300);'> Change to private<br/>
+                <div id="edit-panel-password-field"><input autocomplete="off" type="password" name="chatroom[password]" placeholder="Type password..."></div>
+                <% } %>
+            </div>
+            <br/>
+            <button type="submit" name="commit" class="edit save" data-disable-with="Save">Save</button>
+            <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+        </form>
+        <br/>
+        <button class="edit destroy" onclick='$("#destroy-modal").show()'>Destroy</button>
+        <div id="destroy-modal" class="modal">
+            <div class="modal-content">
+                <span id="close" onclick='$("#destroy-modal").hide()'>&times;</span><br/>
+                <div class="modal-header">
+                    <img class="padlock-image" src="/assets/warning.png">
+                    Are you sure you want to<br/>destroy this chatroom ?<br/>
+                    <i style="font-size:15px">(this action is irreversible)</i>
+                </div>
+                <br/>
+                <form action="/api/chatrooms/<%= chatroom.id %>" method="post" data-remote="true">
+                    <input type="hidden" name="_method" value="delete">
+                    <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+                    <button type="submit" name="commit" class="confirm-choice yes">Yes</button>
+                    <button type="button" class="confirm-choice" onclick='$("#destroy-modal").hide()'>No</button>
+                </form>
+            </div>
+        </div>
+        <button class="edit leave" onclick='$("#leave-modal").show()'>Leave</button>
+    </div>
+</div>
+
+<div id="leave-modal" class="modal">
+    <div class="modal-content">
+        <span id="close" onclick='$("#leave-modal").hide()'>&times;</span><br/>
+        <div class="modal-header">
+            <img class="padlock-image" src="/assets/new_owner.png">
+            Select a new owner for this chatroom
+        </div>
+        <br/>
+        <form action="/api/chatrooms/<%= chatroom.id %>/leave" accept-charset="UTF-8" method="post" data-remote="true">
+            <input type="hidden" name="_method" value="put">
+            <div class="modal-body">
+                <input autocomplete="off" placeholder="Enter user name..." type="text" name="chatroom[owner]">
+                <button type="submit" class="button-password" onclick='$("#leave-modal").hide()'><img style="padding:0;width:25px;height:25px;vertical-align:middle;" src="/assets/send.png"></button>
+                <input value="<%= chatroom.id %>" type="hidden" name="chatroom[chatroom_id]">
+                <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+            </div>
+        </form>
+    </div>
+</div>

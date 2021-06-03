@@ -1,0 +1,18 @@
+<script type="text/javascript">
+<% if (current_user) %>
+    Transcendence.initialize({
+      chatrooms: <%== Chatroom.all.order(:name).to_json(:include => :chat) %>,
+      private_rooms: <%== PrivateRoom.all.to_json(:include => :private_message) %>,
+      users: <%== User.all.order(:username).to_json %>,
+      friends: <%== Friend.all.to_json %>,
+      pongs: <%== Pong.all.order(:updated_at).reverse.to_json %>,
+      games: <%== Game.all.to_json %>,
+      guilds: <%== Guild.all.order(:points).reverse.to_json %>,
+      guild_wars: <%== GuildWar.all.order(:end).reverse.to_json %>,
+      guild_invitations: <%== GuildInvitation.all.to_json %>,
+      tournaments: <%== Tournament.all.order(:start_time).reverse.to_json %>,
+      current_user: <%== current_user.to_json %>,
+      otp_uri: <%== current_user.otp_provisioning_uri(current_user.email, issuer: 'ft_transcendence').to_json %>
+    });
+<% end %>
+</script>

@@ -1,0 +1,69 @@
+<div id="edit-panel">
+    <div class="panel edit-account" style="display:inline-block;vertical-align:middle;">
+        <span class="closebtn" onclick="document.location='/#users/<%= user.id %>'">&times;</span><br/><br/>
+        <div class="header">
+            <h1>Edit account</h1>
+        </div>
+        <br/>
+        <form class="edit_user" id="edit_user" action="/users" accept-charset="UTF-8" method="post">
+            <input type="hidden" name="_method" value="put">
+            <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+
+            <div class="field">
+                Email<br/>
+                <input autocomplete="email" type="email" value="<%= user.email %>" name="user[email]" id="user_email">
+            </div>
+
+            <div class="field">
+                Password<br/><i style="font-size:12px">(leave blank if you don't want to change it)</i><br/>
+                <input autocomplete="new-password" type="password" name="user[password]" id="user_password" placeholder="6 characters minimum...">
+            </div>
+
+            <div class="field">
+                Password confirmation<br/>
+                <input autocomplete="new-password" type="password" name="user[password_confirmation]"
+                    id="user_password_confirmation">
+            </div>
+
+            <div class="field">
+                Current password<br/><i style="font-size:12px">(we need your current password to confirm your changes)</i><br/>
+                <input autocomplete="current-password" type="password" name="user[current_password]"
+                    id="user_current_password">
+            </div>
+
+            <div class="actions">
+                <input type="submit" name="commit" value="update" class="edit save">
+            </div>
+        </form>
+    </div>
+    &emsp;
+    <div class="panel edit-account" style="display:inline-block;vertical-align:middle;">
+        <div class="header">
+            <h1>2 Factor Auth</h1>
+        </div>
+        <% if (user.otp_required_for_login == false) { %>
+            <form id="enable-2fa" method="post" action="/api/users/enable_2fa" data-remote="true">
+                <input type="hidden" name="_method" value="put">
+                <input class="edit select" type="submit" value="enable">
+                <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+            </form>
+        <% } else if (user.otp_required_for_login == true) { %>
+            <form id="disable-2fa" method="post" action="/api/users/disable_2fa" data-remote="true">
+                <input type="hidden" name="_method" value="put">
+                <input class="edit selected" type="submit" value="disable">
+                <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+            </form>
+            <br/>
+            <i>Scan the QR Code </i>
+            <div id="qrcode"></div>
+        <% } %>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('#qrcode').qrcode({
+        width: 256,
+        height: 256,
+        text: Transcendence.otp_uri
+    });
+</script>

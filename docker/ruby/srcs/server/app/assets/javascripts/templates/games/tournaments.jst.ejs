@@ -1,0 +1,38 @@
+<div id="users-index">
+    <table class="admin-choices" style="width:60%;">
+        <% if (Transcendence.tournaments.length == 0) { %>
+        <tr>
+            <td style="text-align:center;">There are no tournaments !</td>
+        </tr>
+        <% } %>
+        <% Transcendence.tournaments.each(function (tr) { %>
+        <% if (tr.toJSON().started == true) { var class_name = "inactive" } else { var class_name = "users-list" } %>
+        <tr class="<%= class_name %>">
+            <td style="font-size:12px;">#<%= tr.toJSON().id %></td>
+            <td style="font-size:12px;">User reward: <%= tr.toJSON().user_reward %><br/>Guild reward: <%= tr.toJSON().guild_reward %></td>
+            <td style="font-size:12px;">Start time: <%= tr.toJSON().start_time.split("T")[0] %> <%= tr.toJSON().start_time.split("T")[1].split(".")[0] %></td>
+            <% if (tr.toJSON().started == true && !tr.toJSON().winner) { %>
+            <td><b>started</b></td>
+            <% } else if (tr.toJSON().started == true && tr.toJSON().winner) { %>
+            <td style="font-size:12px;">winner:<br/><b><%= Transcendence.users.get(tr.toJSON().winner).toJSON().username %></b></td>
+            <% } else if (Transcendence.current_user.toJSON().tournament != tr.id) { %>
+            <td class="users-action">
+                <form action="/api/tournaments/<%= tr.id %>/register" method="post" data-remote="true">
+                    <input type="hidden" name="_method" value="put">
+                    <button type="submit" class="menu-option">register</button>
+                    <input value="<%= Transcendence.current_user.toJSON().id %>" type="hidden" name="user_two_id">
+                </form>
+            </td>
+            <% } else { %>
+            <td class="users-action">
+                <form action="/api/tournaments/<%= tr.id %>/unregister" method="post" data-remote="true">
+                    <input type="hidden" name="_method" value="put">
+                    <button type="submit" class="decline-request">unregister</button>
+                    <input value="<%= Transcendence.current_user.toJSON().id %>" type="hidden" name="user_two_id">
+                </form>
+            </td>
+            <% } %>
+        </tr>
+        <% }) %>
+    </table>
+</div>

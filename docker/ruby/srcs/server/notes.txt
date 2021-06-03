@@ -1,0 +1,153 @@
+a faire pour transition mon ordi -> docker:
+changer les commentaires dans config/database.yml
+changer ruby version a 2.5.1 (ou 2.7.1) dans le gemfile
+
+Pour l'erreur "You must use Bundler 2 or greater with this lockfile" :
+gem install bundler -v 1.17.3
+gem uninstall bundler -v 2.2.6
+bundle update --bundler
+
+ou
+
+rm Gemfile.lock
+bundle _1.17.3_ install
+
+utiliser specifique version bundler:
+bundle _2.2.8_ -v
+
+lister les versions de bundle disponibles:
+gem list bundle -a
+
+Creer le chat:
+https://dev.to/timnans/simple-rails-6-chat-application-with-action-cable-1b6m
+https://iridakos.com/programming/2019/04/04/creating-chat-application-rails-websockets
+https://dev.to/nkemjiks/simple-chatroom-with-rails-6-and-actioncable-3bc3
+
+bin de postgres:
+/usr/lib/postgresql/12/bin/postgres
+
+pbs postgresql:
+https://stackoverflow.com/questions/60306594/failed-to-start-postgresql-cluster-10-main-when-booting
+
+POUR JQUERY:
+gem "jquery-rails"
+yarn add jquery (a peut etre rajouter dans le dockerfile)
+
+
+ruby version 2.7.1
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+rbenv global 2.7.1
+rbenv local 2.7.1
+
+manipuler database:
+rails db
+password pour user postgres: root
+puis dans le terminal:
+\dt      pour lister databases
+SELECT * FROM dbname;      pour afficher tous les elements de la db
+
+interference turbolinks avec js:
+si c'est le cas, rajouter dans le lien par ex:
+<a href="/" data-turbolinks="false">...</a>
+            -----------------------
+ou dans une balise, ex:
+<div data-turbolinks="false"></div>
+
+auto-implementation dans fichiers: ctrl + shift + i
+
+
+
+
+SI PB AVEC JS (NE DETECTE PAS LE FICHIER JS AU BON ENDROIT):
+
+bundle exec rails webpacker:install
+
+PUIS AJOUTER DANS config/webpack/environment.js ENTRE LES 2 LIGNES:
+
+const webpack = require('webpack')
+environment.plugins.prepend('Provide',
+  new webpack.ProvidePlugin({
+    $: 'jquery/src/jquery',
+    jQuery: 'jquery/src/jquery',
+    Backbone: "backbone/backbone.js",
+    Popper: ['popper.js', 'default']
+  })
+)
+
+https://www.botreetechnologies.com/blog/introducing-jquery-in-rails-6-using-webpacker/
+
+
+
+
+Backbone:
+npm install --save backbone
+dans config/webpack/environment.js ajouter la ligne Backbone: "backbone/backbone.js"
+
+si erreur avec javascript_include_tag (asset pipeline):
+dans config/environments/development.rb checker quil y ait bien les lignes
+config.assets.debug = false
+config.assets.check_precompiled_asset = false
+
+si pb bundle:
+sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
+sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1
+
+
+Dans POSTGRESQL terminal:
+SELECT * FROM nomtable;  ==> montrer tous les elements d'une table
+SELECT * FROM nomtable WHERE id=10 ==> selectionner table id 10
+UPDATE chatrooms SET members = array_remove(members, CAST ('10' AS BIGINT)); ==> supprimer user 10 des members des chatrooms
+
+Automatically populate database:
+in db/seeds.rb
+User.create(...parameters...)
+puis run rail db:seed
+ou rails db:setup (= supprime db puis fait seed)
+
+
+2 factor authentication:
+gem "devise-two-factor"
+Dans user.rb :
+devise :two_factor_authenticatable,
+         :otp_secret_encryption_key => ENV['ENCRYPTION_KEY']
+dans docker-compose, partie "environment" rajouter la ligne:
+ENCRYPTION_KEY: 00805870a2147e34eda3777504a715580c60c5d88323c477118ecedcfc582216
+openssl rand -base64 32 pour generer cle
+
+acceder au otp (voir le code genere par le serveur):
+current_user.current_otp
+
+Pour QR code: jquery.qrcode
+npm install jquery.qrcode
+
+
+cancel account (pour plus tard):
+<h3>Cancel my account</h3>
+<form method="post" action="/users" data-remote="true">
+    <input type="hidden" name="_method" value="delete">
+    <input data-confirm="Are you sure?" class="edit destroy" type="submit" value="Cancel my account">
+    <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+</form>
+
+Connect avec 42:
+https://github.com/fakenine/omniauth-marvin
+dans config/devise.rb (ligne 278):
+config.omniauth :marvin, ENV["FT_ID"], ENV["FT_SECRET"]
+FT_ID et FT_SECRET s'obtiennent en creant une application dans intra42 settings/API
+parametrer le REDIRECT URI a:
+http://192.168.1.12:3000/users/auth/marvin/callback
+ou
+http://localhost:3000/users/auth/marvin/callback
+ou
+http://nom.domaine/users/auth/marvin/callback
+
+/config/environment.rb contient les variables d'environnement pour les cles
+
+
+    modifié :         app/assets/javascripts/templates/guild_wars/history.jst.ejs
+    modifié :         app/assets/javascripts/templates/guild_wars/index.jst.ejs
+    modifié :         app/assets/javascripts/templates/guild_wars/new.jst.ejs
+    modifié :         app/assets/javascripts/templates/guilds/current_guilds.jst.ejs
+    modifié :         app/assets/javascripts/templates/guilds/list_guilds.jst.ejs
+    modifié :         app/assets/javascripts/templates/guilds/panel.jst.ejs

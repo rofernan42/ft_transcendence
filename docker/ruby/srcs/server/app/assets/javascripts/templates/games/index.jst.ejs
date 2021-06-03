@@ -1,0 +1,24 @@
+<div id="matchmaking-index" style="text-align:center;font-size:15px;">
+    <form action="/api/games" method="post" data-remote="true" id="search_game" hidden="true">
+        <input id="ladder-id" type="checkbox" name="ladder" style="vertical-align:middle;width:20px;height:20px;"> play a ranked match
+        <br/><br/>
+        <input type="hidden" name="pending" value="true">
+        <input type="hidden" id="ladder-id-check" name="ladder" value="false">
+        <input type="hidden" id="duel-id" name="duel" value="false">
+        <span id="user-profile"><button type="submit">search players</button></span>
+        <input type="hidden" name="authenticity_token" value="<%= $(`meta[name='csrf-token']`).attr('content') %>">
+    </form>
+</div>
+<script>
+   
+</script>
+<div id="waiting" hidden="true" style="text-align:center;font-size:15px;">
+    Waiting for opponent...
+    <br/><br/>
+    <span id="user-profile"><button id="cancel-id" class="decline">cancel</button></span>
+</div>
+<div id="found" hidden="true" style="text-align:center;font-size:15px;">
+    Opponent found !
+</div>
+<br/>
+<div id="tournaments-list"></div>
