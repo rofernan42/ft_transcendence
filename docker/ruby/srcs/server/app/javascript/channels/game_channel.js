@@ -259,7 +259,8 @@ consumer.subscriptions.create("GameChannel", {
       // });
     }
     else if (data.content == "disconnected") {
-      remove_sub()
+      console.log("user-disconnected")
+		remove_sub()
       if (location.hash != "#games") {
         setTimeout(function () {
           location.hash = "#games"
