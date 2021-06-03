@@ -110,7 +110,7 @@ class PongsController < ApplicationController
                   guild_war.pending = false
                 end
               end
-              if guild_war.save
+              if guild_war.save && guild_one.save && guild_two.save
                 ActionCable.server.broadcast "guild_channel", content: "guild_war", userid: current_user.id
               end
             end
